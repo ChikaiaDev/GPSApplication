@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -12,6 +13,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,11 +34,19 @@ public class MainActivity extends AppCompatActivity {
 
     //reference to UI elements
 
-    TextView tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates, tv_address;
+    TextView tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates, tv_address, tv_countOfLocations;
 
     Switch sw_locationsupdates, sw_gps;
 
+    Button btn_newLocation, btn_showSavedLocations;
+
     boolean updateOn = false;
+
+    //current Location
+    Location currentLocation;
+
+    //List of saved Location
+    List<Location> savedLocations;
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -75,8 +85,11 @@ public class MainActivity extends AppCompatActivity {
         tv_sensor = findViewById(R.id.tv_sensor);
         tv_updates = findViewById(R.id.tv_updates);
         tv_address = findViewById(R.id.tv_address);
+        tv_countOfLocations = findViewById(R.id.tv_countOfLocations);
         sw_locationsupdates = findViewById(R.id.sw_locationsupdates);
         sw_gps = findViewById(R.id.sw_gps);
+        btn_newLocation = findViewById(R.id.btn_newLocation);
+        btn_showSavedLocations = findViewById(R.id.btn_showSavedLocations);
 
         locationRequest = new LocationRequest();
         locationRequest.setInterval(1000 * 30);
@@ -102,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
+        //onclick listeners
         sw_gps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,6 +140,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btn_showSavedLocations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, showSavedLocationList.class);
+                startActivity(i);
+            }
+        });
+
+        btn_newLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //get gps location
+                //add new location in the list
+                MyApplication myApplication = (MyApplication) getApplicationContext();
+                savedLocations =  myApplication.getMyLocations();
+                savedLocations.add(currentLocation);
+
+            }
+        });
+
+
 
         updateGPS();
     }//end of on create
@@ -175,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Location location) {
                     updateUiValues(location);
+                    currentLocation = location;
                 }
             });
         }else{
@@ -209,5 +245,10 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
             tv_address.setText("Unable to get Street Address ");
         }
+
+        MyApplication myApplication = (MyApplication) getApplicationContext();
+        savedLocations =  myApplication.getMyLocations();
+
+        tv_countOfLocations.setText(Integer.toString(savedLocations.size()));
     }
 }

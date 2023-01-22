@@ -180,4 +180,47 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_address"
         tools:layout_editor_absoluteX="1dp" />
 
+    <TextView
+        android:id="@+id/tv_LableOfCountOfLocations"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="Saved Loactions:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sensor" />
+
+    <TextView
+        android:id="@+id/tv_countOfLocations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        app:layout_constraintStart_toEndOf="@+id/tv_LableOfCountOfLocations"
+        app:layout_constraintTop_toTopOf="@+id/tv_LableOfCountOfLocations" />
+
+    <Button
+        android:id="@+id/btn_newLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:text="Save Location"
+        app:cornerRadius="10px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_LableOfCountOfLocations" />
+
+    <Button
+        android:id="@+id/btn_showSavedLocations"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Show Saved Locations"
+        app:cornerRadius="10px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_newLocation" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
