@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     LocationRequest locationRequest;
 
     LocationCallback locationCallback;
+
+    LocationManager locationManager;
+
+    Criteria criteria;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -162,19 +169,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    public void updateGPS(){
+    public void updateGPS() {
         //Get permission from user for GPS
         //Get current location
         //update the UI
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
 
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
-                    updateUiValues(location);
+                    if (location != null) {
+                        updateUiValues(location);
+                    } else {
+                        locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                        criteria = new Criteria();
+                        String bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
+
+                        //You can still do this if you like, you might get lucky:
+                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        location = locationManager.getLastKnownLocation(bestProvider);
+                        updateUiValues(location);
+                    }
+
+
                 }
             });
         }else{
